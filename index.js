@@ -42,7 +42,7 @@ app.get('/:filename', function(req,res){
     //TODO: Make this nicer (and URL Escape filename)
 
     //res.set('Content-Type',"text/xml");
-    var twiMLURL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<Response><Pause length=\"2\"/><Play>https://s3-" + REGION + ".amazonaws.com/" + TARGET_BUCKET + "/"+ req.params.filename + ".mp3</Play></Response>";
+    var twiMLURL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<Response><Pause length=\"1\"/><Play>https://s3-" + REGION + ".amazonaws.com/" + TARGET_BUCKET + "/"+ req.params.filename + ".mp3</Play></Response>";
     res.writeHead(200,{'Content-Type':"text/xml"});
     res.end(twiMLURL);
 });
@@ -60,12 +60,22 @@ app.get('/', function(req,res){
 app.post('/', function(req,res){
     const {to, message = "", voice = "Nicole"} = req.body;
 
-    console.log("VOICE POST: [" + to +"] [" + message + "] [" + voice + "]" );
+    var text = "";
+
+    if (Array.isArray(message)) {
+        //need to concatenate into a single string
+        text = message.join(' ');
+    } else {
+        text = message;
+    }
+    
+
+    console.log("VOICE POST: [" + to +"] [" + text + "] [" + voice + "]" );
 
     if(!isValidPhoneNumber(to)){
         res.status(400).json({error: 'Invalid phone number'})
     } else {    
-        generateSpeechToS3AndCall(to, message, voice, TARGET_BUCKET, res);
+        generateSpeechToS3AndCall(to, text, voice, TARGET_BUCKET, res);
         //res.send("Successfully sent notification");
     }
 });
@@ -86,7 +96,16 @@ app.post('/sms', function(req,res){
     var to = req.body.to;
     var message = req.body.message;
 
-    console.log("SMS POST: [" + to +"] [" + message + "]");
+    var text = "";
+
+    if (Array.isArray(message)) {
+        //need to concatenate into a single string
+        text = message.join(' ');
+    } else {
+        text = message;
+    }
+
+    console.log("SMS POST: [" + to +"] [" + text + "]");
     
     if (!isValidPhoneNumber(to)) {
         res.status(400).json({error: 'Invalid phone number'})
@@ -95,7 +114,7 @@ app.post('/sms', function(req,res){
     client.messages.create({
         from: FROM_NUMBER, 
         to: to, 
-        body: message
+        body: text
     }).then((message) => res.send("Success ["+message.sid+"]"));
 
     console.log("Successful SMS: [" + to +"] [" + message + "]" );
