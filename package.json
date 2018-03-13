@@ -1,0 +1,19 @@
+{
+  "name": "twilionotifier",
+  "version": "0.1.0",
+  "description": "RESTful endpoint for PI Notifications for voice and SMS built on NodeJS, Twilio, AWS Lambda, Polly and API Gateway",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sampride/TwilioNotifier.git"
+  },
+  "author": "Sam Pride",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/sampride/TwilioNotifier/issues"
+  },
+  "homepage": "https://github.com/sampride/TwilioNotifier#readme"
+}
