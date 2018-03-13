@@ -4,6 +4,8 @@
   "description": "RESTful endpoint for PI Notifications for voice and SMS built on NodeJS, Twilio, AWS Lambda, Polly and API Gateway",
   "main": "index.js",
   "scripts": {
+    "start": "./node_modules/.bin/serverless offline -s dev",
+    "debug": "SET SLS_DEBUG=* && node --debug %USERPROFILE%\\AppData\\Roaming\\npm\\node_modules\\serverless\\bin\\serverless offline -s dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +17,16 @@
   "bugs": {
     "url": "https://github.com/sampride/TwilioNotifier/issues"
   },
-  "homepage": "https://github.com/sampride/TwilioNotifier#readme"
+  "homepage": "https://github.com/sampride/TwilioNotifier#readme",
+  "dependencies": {
+    "aws-sdk": "^2.207.0",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "serverless-http": "^1.5.3",
+    "serverless-offline": "^3.18.0",
+    "twilio": "^3.13.0"
+  },
+  "devDependencies": {
+    "serverless-offline": "^3.18.0"
+  }
 }

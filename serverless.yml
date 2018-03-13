@@ -1,0 +1,53 @@
+# serverless.yml
+
+service: twilio-notifier
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: dev
+  region: ap-southeast-2 # Sydney
+  memorySize: 128
+  timeout: 15
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:PutObjectAcl
+        - s3:GetObject
+        - s3:GetObjectAcl
+        - s3:DeleteObject
+      Resource: "*" #TODO Look at narrowing this down to the TARGET_BUCKET
+    - Effect: Allow
+      Action:
+        - polly:SynthesizeSpeech
+        - polly:DescribeVoices
+        - polly:ListLexicons
+      Resource: "*"
+  environment:
+    TWILIO_SID: ${file(./serverless.env.yml):dev.TWILIO_SID}
+    TWILIO_Token: ${file(./serverless.env.yml):dev.TWILIO_Token}
+    TWILIO_From: ${file(./serverless.env.yml):dev.TWILIO_From}
+    TARGET_BUCKET: ${file(./serverless.env.yml):dev.TARGET_BUCKET}
+    REGION: ${file(./serverless.env.yml):dev.REGION}
+
+    #GW_URL: "https://ep2ycmz2oe.execute-api.ap-southeast-2.amazonaws.com/dev/"
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  region: ${opt:region, self:provider.region}
+  prod:
+    #GW_URL: { "Fn::Join" : ["", [ "https://", { "Ref" : "ApiGatewayRestApi" }, ".execute-api.${self:custom.region}.amazonaws.com/${self:custom.stage}" ] ]  }
+  dev:
+    #GW_URL: "http://localhost:3000/"
+
+
+functions:
+  notification:
+    handler: index.handler
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'
+
+plugins:
+  - serverless-offline

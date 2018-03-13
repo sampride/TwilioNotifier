@@ -57,3 +57,8 @@ typings/
 # dotenv environment variables file
 .env
 
+#ServerLess stuff
+admin.env
+_meta
+.serverless
+serverless.env.yml 
